@@ -11,26 +11,25 @@
 		<script>
 			$(function() {
 				var multiplyText = function(text, sum) {for(var out='', i=0; i < sum; i++){out += i + '. ' + text}; return out;};				
-				$('body').prepend(multiplyText('<a href="#">ShowModal</a><br />', 200));			
+				$('body').prepend(multiplyText('<a href="#">ShowModal</a><br />', 200))
+					.on('click', 'a[!class]', function(e) {
+						var modal = $.trueModal.go({
+							content: {
+								html: 'Hello! :)',
+								longText: multiplyText('<a href="#">ShowModal</a><br />', 100),
+								button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
+							},
+							statical: $.browser.mobile,
+							containerTop: 20,
+							spacerSelector: '> div > div:eq(1)',
+							template: $('#template').text(),
+							beforeRemove: function() {
+								return confirm('You sure?');
+							}
+						});
 				
-				$('body').on('click', 'a[!class]', function(e) {
-					var modal = $.trueModal.go({
-						content: {
-							html: 'Hello! :)',
-							longText: multiplyText('<a href="#">ShowModal</a><br />', 100),
-							button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
-						},
-						statical: $.browser.mobile,
-						containerTop: 20,
-						spacerSelector: '> div > div:eq(1)',
-						template: $('#template').text(),
-						beforeRemove: function() {
-							return confirm('You sure?');
-						}
+						return false;
 					});
-			
-					return false;
-				});
 			});
 		</script>
 	</head>
