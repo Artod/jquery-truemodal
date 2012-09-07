@@ -12,10 +12,9 @@ To get started, download the plugin, unzip it and copy files to your website/app
 Load files in the <head> section of your HTML document. Make sure you also add the jQuery library.
 
     <head>
-		
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-		<script type="text/javascript" src="http://github.com/trix/nano/blob/master/jquery.nano.js"></script>
-        <script type="text/javascript" src="/jquery.truemodal.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+		<script src="jquery.nano.js"></script>
+        <script src="jquery.truemodal.js"></script>
     </head>
 
 Initialise the script like this:
@@ -24,7 +23,7 @@ Initialise the script like this:
         $(document).ready(function() {
 			var modal = $.trueModal.go({
 				content: {
-					html: text
+					html: 'Hello :)'
 				},
 				width: 200
 			});
@@ -40,13 +39,13 @@ May also be passed an optional options object which will extend the default valu
 			var modal = $.trueModal.go({
 				content: {
 					html: 'Hello! :)',
-					button: '<input type="button" value="OK" /> | <input type="button" value="Cancel" class="true-modal-close" />'
+					button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
 				},
 				static: isMobileBrowser,
 				containerTop: 20,
 				overlayOpacity: 0.3,
 				width: 500,
-				template: '<div style="text-align:right;" class="true-modal-close"><a href="#">Close</a> | <a href="#" class="true-modal-hide">Hide</a></div> <div>{html}</div><div>{button}</div>',				
+				template: '<div style="text-align:right;"><a href="#" class="true-modal-remove">Close</a> | <a href="#" class="true-modal-hide">Hide</a></div> <div>{html}</div><div>{button}</div>',				
 				overlayClickClose: true,				
 				beforeShow: function() {
 					alert('beforeShow');

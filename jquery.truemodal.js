@@ -1,5 +1,5 @@
 /*
-* TrueModal 18:33 06.09.2012
+* TrueModal 07.09.2012
 * (c) 2012 Artod, http://artod.ru
 */
 
@@ -43,7 +43,7 @@
 			overlayClickClose: true,
 			overlayOpacity: 0.2,
 			containerTop: 'auto',
-			static: false,
+			statical: false,
 			beforeShow: $.noop,
 			afterShow: $.noop,
 			beforeRemove: $.noop,
@@ -52,7 +52,7 @@
 			afterHide: $.noop,
 			beforeClear: $.noop,
 			afterClear: $.noop				
-		}, profiles[options.profile], options);
+		}, profiles[options.profile] ? profiles[options.profile] : {}, options);
 		this.bodyMargin = 0;
 
 		var id = getUID(),
@@ -67,16 +67,15 @@
 
 		this.$container.append( $.nano(this.opts.template, this.opts.content) );
 		
-		this.$spacer = this.$container.find(this.opts.spacerSelector);
+		if (this.opts.spacerSelector) {
+			this.$spacer = this.$container.find(this.opts.spacerSelector);
+		}		
 
 		this.$overlay.css({
 			opacity: this.opts.overlayOpacity
 		});
 
-		if (this.opts.static) {
-			/*this.$viewport.add(this.$overlay).css({
-				position: 'absolute'
-			});*/
+		if (this.opts.statical) {
 			this.$modal.css({
 				position: 'absolute'
 			});
@@ -112,7 +111,7 @@
 			return false;
 		});
 
-		if (!this.opts.static) {
+		if (!this.opts.statical) {
 			$window.on('resize.trueModal', function(e) {
 				self.adjustContainer();				
 				self.adjustModal();
@@ -167,7 +166,7 @@
 			this.opts.afterClear();
 		},
 		bodyOverflowOn: function() {
-			if (this.opts.static) {	
+			if (this.opts.statical) {	
 				return false;
 			}
 
@@ -180,7 +179,7 @@
 			}
 		},
 		bodyOverflowOff: function() {
-			if (this.opts.static) {	
+			if (this.opts.statical) {	
 				return false;
 			}
 
@@ -195,7 +194,7 @@
 			$body.css('margin-right', (newBodyOuterWidth - oldBodyOuterWidth) + 'px');
 		},
 		adjustModal: function() {
-			if (this.opts.static) {					
+			if (this.opts.statical) {					
 				this.$overlay.add(this.$viewport).css({
 					height: $document.height(),
 					width: $document.width()
@@ -220,7 +219,7 @@
 			
 			this.$container.css({
 				width: width,
-				top: (this.opts.static ? $window.scrollTop() : 0) + top + 'px'
+				top: (this.opts.statical ? $window.scrollTop() : 0) + top + 'px'
 			});
 		}
 	};
