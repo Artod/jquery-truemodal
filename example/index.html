@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <title>TrueModal Example</title>
+	    <meta charset="utf-8" />
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+		<script>
+			/*https://github.com/trix/nano/blob/master/jquery.nano.js*/
+			/* Nano Templates (Tomasz Mazur, Jacek Becela) */
+			(function($){
+			  $.nano = function(template, data) {
+				return template.replace(/\{([\w\.]*)\}/g, function (str, key) {
+				  var keys = key.split("."), value = data[keys.shift()];
+				  $.each(keys, function () { value = value[this]; });
+				  return (value === null || value === undefined) ? "" : value;
+				});
+			  };
+			})(jQuery);
+		</script>
+        <script src="jquery.truemodal.js"></script>
+		
+		<script>
+			$(function() {
+				var multiplyText = function(text, sum) {for(var out='', i=0; i < sum; i++){out += i + '. ' + text}; return out;};				
+				$('body').prepend(multiplyText('<a href="#">ShowModal</a><br />', 200));
+				
+				var isMobileBrowser = false; // need define mobile browser
+				
+				$('body, .true-modal-container').on('click', 'a[!class]', function(e) {
+					var modal = $.trueModal.go({
+						content: {
+							html: 'Hello! :)',
+							longText: multiplyText('<a href="#">ShowModal</a><br />', 100),
+							button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
+						},
+						static: isMobileBrowser,
+						containerTop: 20,
+						spacerSelector: '> div > div:eq(1)',
+						template: $('#template').text(),
+						beforeRemove: function() {
+							return confirm('You sure?');
+						}
+					});
+
+					return false;
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<script type="text/template" id="template">
+			<div style="background-color:#fff; padding:20px;">
+				<div style="text-align:right;" class="true-modal-remove">
+					<a href="#" class="true-modal-remove">Close</a> | <a href="#" class="true-modal-hide">Hide</a>
+				</div>
+				<div style="width:500px; padding:20px;">{html}</div>
+				<div>{longText}</div>
+				<div>{button}</div>
+			</div>
+		</script>
+	</body>
+</html>

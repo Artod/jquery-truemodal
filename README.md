@@ -22,7 +22,12 @@ Initialise the script like this:
 
     <script>
         $(document).ready(function() {
-			var modal = $.trueModal.go({html: 'Hello! :)'}, {width: 200});
+			var modal = $.trueModal.go({
+				content: {
+					html: text
+				},
+				width: 200
+			});
         });
     </script>
 
@@ -32,7 +37,11 @@ May also be passed an optional options object which will extend the default valu
         $(document).ready(function() {
 			var isMobileBrowser = false; // need define mobile browser
 			
-			var modal = $.trueModal.go({html: 'Hello! :)', button: '<input type="button" value="OK" /> | <input type="button" value="Cancel" class="true-modal-close" />'}, {
+			var modal = $.trueModal.go({
+				content: {
+					html: 'Hello! :)',
+					button: '<input type="button" value="OK" /> | <input type="button" value="Cancel" class="true-modal-close" />'
+				},
 				static: isMobileBrowser,
 				containerTop: 20,
 				overlayOpacity: 0.3,
@@ -74,7 +83,10 @@ You can create profiles order to not pass options many time. Example:
 				template: '<b>{html}</b>'				
 			});
 			
-			var modal = $.trueModal.go({html: 'Hello! :)'}, {
+			var modal = $.trueModal.go({
+				content: {
+					html: 'Hello! :)'
+				},
 				profile: 'myProfile1'
 			});
         });
