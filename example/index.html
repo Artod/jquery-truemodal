@@ -5,23 +5,22 @@
 	    <meta charset="utf-8" />
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 		<script src="jquery.nano.js"></script>
+		<script src="detectmobilebrowser.js"></script>		
         <script src="../jquery.truemodal.js"></script>
 		
 		<script>
 			$(function() {
 				var multiplyText = function(text, sum) {for(var out='', i=0; i < sum; i++){out += i + '. ' + text}; return out;};				
-				$('body').prepend(multiplyText('<a href="#">ShowModal</a><br />', 200));
+				$('body').prepend(multiplyText('<a href="#">ShowModal</a><br />', 200));			
 				
-				var isMobileBrowser = false; // need define mobile browser
-				
-				$('body').on('click', 'a[!class]', function(e) { //, .true-modal-container
+				$('body').on('click', 'a[!class]', function(e) {
 					var modal = $.trueModal.go({
 						content: {
 							html: 'Hello! :)',
 							longText: multiplyText('<a href="#">ShowModal</a><br />', 100),
 							button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
 						},
-						statical: isMobileBrowser,
+						statical: $.browser.mobile,
 						containerTop: 20,
 						spacerSelector: '> div > div:eq(1)',
 						template: $('#template').text(),

@@ -41,7 +41,7 @@ May also be passed an optional options object which will extend the default valu
 					html: 'Hello! :)',
 					button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
 				},
-				static: isMobileBrowser,
+				statical: isMobileBrowser,
 				containerTop: 20,
 				overlayOpacity: 0.3,
 				width: 500,
@@ -76,7 +76,7 @@ You can create profiles order to not pass options many time. Example:
     <script>
         $(document).ready(function() {
 			$.trueModal.addProfile('myProfile1', {
-				static: isMobileBrowser,
+				statical: isMobileBrowser,
 				containerTop: 20,
 				width: 500,
 				template: '<b>{html}</b>'				
