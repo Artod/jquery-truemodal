@@ -12,7 +12,7 @@
 				var multiplyText = function(text, sum) {for(var out='', i=0; i < sum; i++){out += i + '. ' + text}; return out;};				
 				$('body').prepend(multiplyText('<a href="#">ShowModal</a><br />', 200));
 				
-				var isMobileBrowser = true; // need define mobile browser
+				var isMobileBrowser = false; // need define mobile browser
 				
 				$('body').on('click', 'a[!class]', function(e) { //, .true-modal-container
 					var modal = $.trueModal.go({
