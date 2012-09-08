@@ -2,7 +2,6 @@ trueModal
 ========
 
 Modal popup with non scrollable background.
-
 Copyright (c) 2012 Artod - gartod@gmail.com
 
 Demo
