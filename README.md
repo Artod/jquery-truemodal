@@ -5,6 +5,11 @@ Modal popup with non scrollable background.
 
 Copyright (c) 2012 Artod - gartod@gmail.com
 
+Demo
+----------
+
+http://artod.ru/trueModal/demo/
+
 How to use
 ----------
 
@@ -68,8 +73,6 @@ May also be passed an optional options object which will extend the default valu
 			});
         });
     </script>
-
-May be used profiles. Example:
 
 You can create profiles order to not pass options many time. Example:
 
