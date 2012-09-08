@@ -78,7 +78,7 @@ You can create profiles order to not pass options many time. Example:
     <script>
         $(document).ready(function() {
 			$.trueModal.addProfile('myProfile1', {
-				statical: isMobileBrowser,
+				statical: false,
 				containerTop: 20,
 				width: 500,
 				template: '<b>{html}</b>'				
