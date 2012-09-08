@@ -45,11 +45,11 @@ May also be passed an optional options object which will extend the default valu
 					html: 'Hello! :)',
 					button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
 				},
+				template: '<div style="text-align:right;"><a href="#" class="true-modal-remove">Close</a> | <a href="#" class="true-modal-hide">Hide</a></div> <div>{html}</div><div>{button}</div>',
 				statical: isMobileBrowser,
 				containerTop: 20,
 				overlayOpacity: 0.3,
 				width: 500,
-				template: '<div style="text-align:right;"><a href="#" class="true-modal-remove">Close</a> | <a href="#" class="true-modal-hide">Hide</a></div> <div>{html}</div><div>{button}</div>',				
 				overlayClickClose: true,				
 				beforeShow: function() {
 					alert('beforeShow');
