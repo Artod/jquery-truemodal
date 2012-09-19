@@ -13,7 +13,7 @@ How to use
 ----------
 
 To get started, download the plugin, unzip it and copy files to your website/application directory.
-Load files in the <head> section of your HTML document. Make sure you also add the jQuery library.
+Load files in the 'head' section of your HTML document. Make sure you also add the jQuery library.
 
     <head>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
@@ -39,7 +39,7 @@ May also be passed an optional options object which will extend the default valu
     <script>
         $(document).ready(function() {
 			var isMobileBrowser = false; // need define mobile browser
-			
+
 			var modal = $.trueModal.go({
 				content: {
 					html: 'Hello! :)',
@@ -50,50 +50,31 @@ May also be passed an optional options object which will extend the default valu
 				containerTop: 20,
 				overlayOpacity: 0.3,
 				width: 500,
-				overlayClickClose: true,				
-				beforeShow: function() {
+				onOverlayClick: 'remove',
+				onEsc: 'hide',
+				beforeShow: function(modal) {
 					alert('beforeShow');
 				},
-				afterShow: function() {
+				afterShow: function(modal) {
 					alert('afterShow');
 				},
-				beforeRemove: function() {
+				beforeRemove: function(modal) {
 					alert('beforeRemove');
 				},
-				afterRemove: function() {
+				afterRemove: function(modal) {
 					alert('afterRemove');
 				},
-				beforeHide: function() {
+				beforeHide: function(modal) {
 					alert('beforeHide');
 				},
-				afterHide: function() {
+				afterHide: function(modal) {
 					alert('afterHide');
 				}
 			});
         });
     </script>
 
-You can create profiles order to not pass options many time. Example №1:
-
-    <script>
-        $(document).ready(function() {
-			$.trueModal.addProfile('myProfile1', {
-				statical: false,
-				containerTop: 20,
-				width: 500,
-				template: '<b>{html}</b>'				
-			});
-			
-			var modal = $.trueModal.go({
-				content: {
-					html: 'Hello! :)'
-				},
-				profile: 'myProfile1'
-			});
-        });
-    </script>
-
-Example №2:
+You can create profiles order to not pass options many time:
 
     <script>
         $(document).ready(function() {
@@ -101,9 +82,21 @@ Example №2:
 				content: {
 					html: '<img src="loader.gif" />'
 				},
-				spacerSelector: 'img'
+				width: 50
 			});
-			
-			window.modalLoader = $.trueModal.modalByProfile('loader');
+
+			window.trueModalLoader = $.trueModal.go({
+				profile: 'loader',
+				onEsc: 'hide',
+				onOverlayClick: 'hide',
+				autoShow: false,
+				beforeShow: function(modal) {
+					if ($.trueModal.getAll$modals().last().attr('id') != modal.attrId) {
+						$.trueModal.$container.append( modal.$modal.detach() ); // reorder modal with loader on the front
+					}
+				}
+			});
+
+			window.trueModalLoader.show();
         });
     </script>

@@ -1,5 +1,5 @@
 /*
-* TrueModal 19.09.2012
+* jQuery TrueModal 19.09.2012
 * (c) 2012 Artod, http://artod.ru
 */
 
@@ -11,12 +11,20 @@
 		$mainContainer,
 		$document = $(document),
 		profiles = {},
+		modals = {},
 		getUID = (function() {
 			var id = 0;
 			return function() {
 				return id++;
 			};
-		})();
+		})(),
+		switchAction = function(action, obj) {
+			if ( $.isFunction(action) ) {
+				return action();
+			} else if ( $.isFunction(obj[action]) ) {
+				return obj[action]();
+			}
+		};
 
 	$(function() {
 		$body = $('body');
@@ -30,7 +38,7 @@
 		'				#true-modals .true-modal-container{position:relative; background-color:transparent; margin:0px auto 20px auto;}\n' +
 		'</style>');
 
-		$mainContainer = $('#true-modals');
+		$.trueModal.$container = $mainContainer = $('#true-modals');
 
 		$window.on('keyup.trueModal', function(e) {
 			var attrId = $mainContainer.find('> div.true-modal:visible').last().attr('id');
@@ -41,25 +49,13 @@
 
 			var modal = $.trueModal.getObjByAttrId(attrId);
 
-			if (e.keyCode != 27) {
+			if (!modal || e.keyCode != 27) {
 				return;
 			}
 
-			switch(modal.opts.onEsc) {
-				case 'hide':
-					modal.hide();
-					break;
-				case 'remove':
-					modal.remove();
-					break;
-				case 'clear':
-					modal.clear();
-					break;
-			}
+			switchAction(modal.opts.onEsc, modal);
 		});
 	});
-
-	var modals = {};
 
 	var TrueModal = function(options) {
 		this.opts = $.extend({
@@ -68,11 +64,11 @@
 			spacerSelector: '',
 			width: 0,
 			autoShow: true,
-			overlayClickClose: true,
+			onEsc: 'remove',
+			onOverlayClick: 'remove',
 			overlayOpacity: 0.2,
 			containerTop: 'auto',
 			statical: false,
-			onEsc: 'remove',
 			beforeShow: $.noop,
 			afterShow: $.noop,
 			beforeHide: $.noop,
@@ -128,10 +124,10 @@
 
 		var self = this;
 
-		if (this.opts.overlayClickClose) {
+		if (this.opts.onOverlayClick) {
 			this.$modal.on('click.trueModal', this.$viewport, function(e) {
 				if ( $(e.target).hasClass('true-modal-viewport') ) {
-					self.remove();
+					switchAction(self.opts.onOverlayClick, self);
 					return false;
 				}
 			});
@@ -159,7 +155,7 @@
 
 	TrueModal.prototype = {
 		show: function() {
-			if (this.opts.beforeShow() === false) {
+			if (this.opts.beforeShow(this) === false) {
 				return;
 			}
 
@@ -170,38 +166,38 @@
 			this.adjustContainer();
 			this.adjustModal();
 
-			this.opts.afterShow();
+			this.opts.afterShow(this);
 		},
 		hide: function() {
-			if (this.opts.beforeHide() === false) {
+			if (this.opts.beforeHide(this) === false) {
 				return;
 			}
 
 			this.$modal.hide();
 			this.bodyOverflowOn();
 
-			this.opts.afterHide();
+			this.opts.afterHide(this);
 		},
 		remove: function() {
-			if (!modals[this.getId()] || this.opts.beforeRemove() === false) {
+			if (!modals[this.getId()] || this.opts.beforeRemove(this) === false) {
 				return;
 			}
 
 			this.$modal.remove();
 			this.bodyOverflowOn();
 
-			this.opts.afterRemove();
+			this.opts.afterRemove(this);
 
 			delete modals[this.getId()];
 		},
 		clear: function() {
-			if (this.opts.beforeClear() === false) {
+			if (this.opts.beforeClear(this) === false) {
 				return;
 			}
 
 			this.$container.empty();
 
-			this.opts.afterClear();
+			this.opts.afterClear(this);
 		},
 		bodyOverflowOn: function() {
 			if (this.opts.statical) {
@@ -268,12 +264,12 @@
 		addProfile: function(name, opts) {
 			profiles[name] = opts;
 		},
-		modalByProfile: function(name) {
-			return $.trueModal.go(profiles[name]);
-		},
 		getObjByAttrId: function(attrId) {
 			return modals[attrId.replace('true-modal-', '')];
 		},
-		$mainContainer: $mainContainer
+		getAll$modals: function(onlyActive) {
+			return $mainContainer.find( '> div.true-modal' + (onlyActive ? ':visible' : '') );
+		},
+		$container: null
 	};
 })(jQuery, window, document);
