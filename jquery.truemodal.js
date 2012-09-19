@@ -1,10 +1,10 @@
 /*
-* TrueModal 07.09.2012
+* TrueModal 19.09.2012
 * (c) 2012 Artod, http://artod.ru
 */
 
 ;(function($, window, document) {
-	'use strict';		
+	'use strict';
 
 	var $window = $(window),
 		$body,
@@ -19,9 +19,9 @@
 		})();
 
 	$(function() {
-		$body = $('body');		
+		$body = $('body');
 		$body.append('<div id="true-modals"></div>');
-		
+
 		$('head').append('<style>\n' +
 		'	#true-modals {}\n' +
 		'		#true-modals .true-modal{display:none; position:fixed; top:0; left:0; right:0; bottom:0;}\n' +
@@ -29,10 +29,38 @@
 		'			#true-modals .true-modal-viewport{position:absolute; top:0; left:0;  height:100%; width:100%; z-index:100; -webkit-overflow-scrolling: touch;}\n' +
 		'				#true-modals .true-modal-container{position:relative; background-color:transparent; margin:0px auto 20px auto;}\n' +
 		'</style>');
-		
+
 		$mainContainer = $('#true-modals');
+
+		$window.on('keyup.trueModal', function(e) {
+			var attrId = $mainContainer.find('> div.true-modal:visible').last().attr('id');
+
+			if (!attrId) {
+				return;
+			}
+
+			var modal = $.trueModal.getObjByAttrId(attrId);
+
+			if (e.keyCode != 27) {
+				return;
+			}
+
+			switch(modal.opts.onEsc) {
+				case 'hide':
+					modal.hide();
+					break;
+				case 'remove':
+					modal.remove();
+					break;
+				case 'clear':
+					modal.clear();
+					break;
+			}
+		});
 	});
-	
+
+	var modals = {};
+
 	var TrueModal = function(options) {
 		this.opts = $.extend({
 			content: {html: ''},
@@ -44,32 +72,40 @@
 			overlayOpacity: 0.2,
 			containerTop: 'auto',
 			statical: false,
+			onEsc: 'remove',
 			beforeShow: $.noop,
 			afterShow: $.noop,
-			beforeRemove: $.noop,
-			afterRemove: $.noop,
 			beforeHide: $.noop,
 			afterHide: $.noop,
 			beforeClear: $.noop,
-			afterClear: $.noop				
+			afterClear: $.noop,
+			beforeRemove: $.noop,
+			afterRemove: $.noop
 		}, profiles[options.profile] ? profiles[options.profile] : {}, options);
+
 		this.bodyMargin = 0;
 
-		var id = getUID(),
-			attrId = 'true-modal-' + id;
+		var id = getUID();
+		this.getId = function() {
+			return id;
+		};
 
-		$mainContainer.append('<div class="true-modal" id="' + attrId + '"><div class="true-modal-overlay"></div><div class="true-modal-viewport"><div class="true-modal-container"></div></div></div>');
-			
-		this.$modal = $('#' + attrId);
+		this.attrId = 'true-modal-' + id;
+
+		modals[id] = this;
+
+		$mainContainer.append('<div class="true-modal" id="' + this.attrId + '"><div class="true-modal-overlay"></div><div class="true-modal-viewport"><div class="true-modal-container"></div></div></div>');
+
+		this.$modal = $('#' + this.attrId);
 		this.$overlay = $('div.true-modal-overlay', this.$modal);
 		this.$container = $('div.true-modal-container', this.$modal);
 		this.$viewport = $('div.true-modal-viewport', this.$modal);
 
 		this.$container.append( $.nano(this.opts.template, this.opts.content) );
-		
+
 		if (this.opts.spacerSelector) {
 			this.$spacer = this.$container.find(this.opts.spacerSelector);
-		}		
+		}
 
 		this.$overlay.css({
 			opacity: this.opts.overlayOpacity
@@ -93,11 +129,11 @@
 		var self = this;
 
 		if (this.opts.overlayClickClose) {
-			this.$modal.on('click.trueModal', this.$viewport, function(e) {	
+			this.$modal.on('click.trueModal', this.$viewport, function(e) {
 				if ( $(e.target).hasClass('true-modal-viewport') ) {
 					self.remove();
-					return false;					
-				}				
+					return false;
+				}
 			});
 		}
 
@@ -113,7 +149,7 @@
 
 		if (!this.opts.statical) {
 			$window.on('resize.trueModal', function(e) {
-				self.adjustContainer();				
+				self.adjustContainer();
 				self.adjustModal();
 			});
 		}
@@ -147,7 +183,7 @@
 			this.opts.afterHide();
 		},
 		remove: function() {
-			if (this.opts.beforeRemove() === false) {
+			if (!modals[this.getId()] || this.opts.beforeRemove() === false) {
 				return;
 			}
 
@@ -155,6 +191,8 @@
 			this.bodyOverflowOn();
 
 			this.opts.afterRemove();
+
+			delete modals[this.getId()];
 		},
 		clear: function() {
 			if (this.opts.beforeClear() === false) {
@@ -166,35 +204,34 @@
 			this.opts.afterClear();
 		},
 		bodyOverflowOn: function() {
-			if (this.opts.statical) {	
+			if (this.opts.statical) {
 				return false;
 			}
 
 			if (!$mainContainer.find('> div:visible').length) {
 				$body.css({
 					overflow: 'visible',
-					'margin-right': 0
+					'margin-right': $body.data('true-modal-margin')
 				});
-				this.bodyMargin = 0;
 			}
 		},
 		bodyOverflowOff: function() {
-			if (this.opts.statical) {	
+			if (this.opts.statical || $body.css('overflow') == 'hidden') {
 				return false;
 			}
 
-			var oldBodyOuterWidth = $body.outerWidth(true);
+			var currentMargin = $body.css('margin-right');
+			$body.data('true-modal-margin', currentMargin);
 
+			var oldBodyOuterWidth = $body.outerWidth();
 			$body.css({overflow: 'hidden'});
 
-			var newBodyOuterWidth = $body.outerWidth(true);
+			var newBodyOuterWidth = $body.outerWidth();
 
-			this.bodyMargin = (newBodyOuterWidth - oldBodyOuterWidth);
-
-			$body.css('margin-right', (newBodyOuterWidth - oldBodyOuterWidth) + 'px');
+			$body.css('margin-right', ( newBodyOuterWidth - oldBodyOuterWidth + parseInt(currentMargin) ) + 'px');
 		},
 		adjustModal: function() {
-			if (this.opts.statical) {					
+			if (this.opts.statical) {
 				this.$overlay.add(this.$viewport).css({
 					height: $document.height(),
 					width: $document.width()
@@ -207,7 +244,7 @@
 
 			if (top == 'auto') {
 				top = Math.round(($window.height() - this.$container.outerHeight())/3);
-				
+
 				if (top < 0) {
 					top = 10;
 				}
@@ -216,7 +253,7 @@
 			if (this.$spacer) {
 				width = this.$spacer.outerWidth();
 			}
-			
+
 			this.$container.css({
 				width: width,
 				top: (this.opts.statical ? $window.scrollTop() : 0) + top + 'px'
@@ -225,13 +262,17 @@
 	};
 
 	$.trueModal = {
-		go: function(html, options) {
-			var trueModal = new TrueModal(html, options);
-	
-			return trueModal;
+		go: function(opts) {
+			return new TrueModal(opts);
 		},
 		addProfile: function(name, opts) {
 			profiles[name] = opts;
+		},
+		modalByProfile: function(name) {
+			return $.trueModal.go(profiles[name]);
+		},
+		getObjByAttrId: function(attrId) {
+			return modals[attrId.replace('true-modal-', '')];
 		},
 		$mainContainer: $mainContainer
 	};

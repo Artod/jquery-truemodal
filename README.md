@@ -73,7 +73,7 @@ May also be passed an optional options object which will extend the default valu
         });
     </script>
 
-You can create profiles order to not pass options many time. Example:
+You can create profiles order to not pass options many time. Example №1:
 
     <script>
         $(document).ready(function() {
@@ -90,5 +90,20 @@ You can create profiles order to not pass options many time. Example:
 				},
 				profile: 'myProfile1'
 			});
+        });
+    </script>
+
+Example №2:
+
+    <script>
+        $(document).ready(function() {
+			$.trueModal.addProfile('loader', {
+				content: {
+					html: '<img src="loader.gif" />'
+				},
+				spacerSelector: 'img'
+			});
+			
+			window.modalLoader = $.trueModal.modalByProfile('loader');
         });
     </script>
