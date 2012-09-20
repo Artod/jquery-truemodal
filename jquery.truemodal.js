@@ -1,5 +1,5 @@
 /*
-* TrueModal 20.09.2012
+* jQuery TrueModal 20.09.2012
 * (c) 2012 Artod, http://artod.ru
 */
 
