@@ -85,8 +85,7 @@ You can create profiles order to not pass options many time:
 				width: 50
 			});
 
-			window.trueModalLoader = $.trueModal.go({
-				profile: 'loader',
+			window.trueModalLoader = $.trueModal.go('loader', {
 				onEsc: 'hide',
 				onOverlayClick: 'hide',
 				autoShow: false,

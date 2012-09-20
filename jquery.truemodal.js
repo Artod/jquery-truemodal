@@ -1,5 +1,5 @@
 /*
-* jQuery TrueModal 19.09.2012
+* TrueModal 20.09.2012
 * (c) 2012 Artod, http://artod.ru
 */
 
@@ -17,10 +17,10 @@
 			return function() {
 				return id++;
 			};
-		})(),
+		})(),		
 		switchAction = function(action, obj) {
 			if ( $.isFunction(action) ) {
-				return action();
+				return action();			
 			} else if ( $.isFunction(obj[action]) ) {
 				return obj[action]();
 			}
@@ -57,7 +57,15 @@
 		});
 	});
 
-	var TrueModal = function(options) {
+	var TrueModal = function(optionsOrProfile, options) {
+		var profile;
+
+		if (typeof optionsOrProfile == 'object') {
+			var options = optionsOrProfile;
+		} else {
+			profile = optionsOrProfile;
+		}
+
 		this.opts = $.extend({
 			content: {html: ''},
 			template: '{html}',
@@ -66,9 +74,9 @@
 			autoShow: true,
 			onEsc: 'remove',
 			onOverlayClick: 'remove',
-			overlayOpacity: 0.2,
+			overlayOpacity: 0.3,
 			containerTop: 'auto',
-			statical: false,
+			statical: false,			
 			beforeShow: $.noop,
 			afterShow: $.noop,
 			beforeHide: $.noop,
@@ -77,7 +85,7 @@
 			afterClear: $.noop,
 			beforeRemove: $.noop,
 			afterRemove: $.noop
-		}, profiles[options.profile] ? profiles[options.profile] : {}, options);
+		}, (profiles[profile] ? profiles[profile] : {}), options);
 
 		this.bodyMargin = 0;
 
@@ -258,11 +266,11 @@
 	};
 
 	$.trueModal = {
-		go: function(opts) {
-			return new TrueModal(opts);
+		go: function(optionsOrProfile, options) {
+			return new TrueModal(optionsOrProfile, options);
 		},
-		addProfile: function(name, opts) {
-			profiles[name] = opts;
+		addProfile: function(name, options) {
+			profiles[name] = options;
 		},
 		getObjByAttrId: function(attrId) {
 			return modals[attrId.replace('true-modal-', '')];
