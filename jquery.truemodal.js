@@ -1,5 +1,5 @@
 /*
-* jQuery TrueModal 20.09.2012
+* jQuery TrueModal 21.09.2012
 * (c) 2012 Artod, http://artod.ru
 */
 
@@ -47,7 +47,7 @@
 				return;
 			}
 
-			var modal = $.trueModal.getObjByAttrId(attrId);
+			var modal = $.trueModal.getModalById(attrId);
 
 			if (!modal || e.keyCode != 27) {
 				return;
@@ -67,25 +67,31 @@
 		}
 
 		this.opts = $.extend({
-			content: {html: ''},
+			content: '',
 			template: '{html}',
 			spacerSelector: '',
 			width: 0,
 			autoShow: true,
-			onEsc: 'remove',
-			onOverlayClick: 'remove',
 			overlayOpacity: 0.3,
 			containerTop: 'auto',
-			statical: false,			
-			beforeShow: $.noop,
-			afterShow: $.noop,
-			beforeHide: $.noop,
-			afterHide: $.noop,
-			beforeClear: $.noop,
-			afterClear: $.noop,
-			beforeRemove: $.noop,
-			afterRemove: $.noop
+			statical: false,
+			onEsc: 'remove',
+			onOverlayClick: 'remove',
+			afterBodyOverflowOn: function(modal, margin) { },
+			afterBodyOverflowOff: function(modal, margin) { },
+			beforeShow: function(modal) { },
+			afterShow: function(modal) { },
+			beforeHide: function(modal) { },
+			afterHide: function(modal) { },
+			beforeClear: function(modal) { },
+			afterClear: function(modal) { },
+			beforeRemove: function(modal) { },
+			afterRemove: function(modal) { }
 		}, (profiles[profile] ? profiles[profile] : {}), options);
+
+		if (typeof this.opts.content == 'string') {
+			this.opts.content = {html: this.opts.content};
+		}
 
 		this.bodyMargin = 0;
 
@@ -107,9 +113,7 @@
 
 		this.$container.append( $.nano(this.opts.template, this.opts.content) );
 
-		if (this.opts.spacerSelector) {
-			this.$spacer = this.$container.find(this.opts.spacerSelector);
-		}
+		this.$spacer = this.$container.find(this.opts.spacerSelector);
 
 		this.$overlay.css({
 			opacity: this.opts.overlayOpacity
@@ -162,8 +166,8 @@
 	};
 
 	TrueModal.prototype = {
-		show: function() {
-			if (this.opts.beforeShow(this) === false) {
+		show: function(noFilter) {
+			if (!noFilter && this.opts.beforeShow(this) === false) {
 				return;
 			}
 
@@ -176,8 +180,8 @@
 
 			this.opts.afterShow(this);
 		},
-		hide: function() {
-			if (this.opts.beforeHide(this) === false) {
+		hide: function(noFilter) {
+			if (noFilter !== true && this.opts.beforeHide(this) === false) {
 				return;
 			}
 
@@ -186,8 +190,8 @@
 
 			this.opts.afterHide(this);
 		},
-		remove: function() {
-			if (!modals[this.getId()] || this.opts.beforeRemove(this) === false) {
+		remove: function(noFilter) {
+			if (!modals[this.getId()] || ( noFilter !== true && this.opts.beforeRemove(this) === false )) {
 				return;
 			}
 
@@ -198,8 +202,8 @@
 
 			delete modals[this.getId()];
 		},
-		clear: function() {
-			if (this.opts.beforeClear(this) === false) {
+		clear: function(noFilter) {
+			if (noFilter !== true && this.opts.beforeClear(this) === false) {
 				return;
 			}
 
@@ -208,16 +212,18 @@
 			this.opts.afterClear(this);
 		},
 		bodyOverflowOn: function() {
-			if (this.opts.statical) {
+			if (this.opts.statical || $mainContainer.find('> div.true-modal:visible').length) {
 				return false;
 			}
 
-			if (!$mainContainer.find('> div:visible').length) {
-				$body.css({
-					overflow: 'visible',
-					'margin-right': $body.data('true-modal-margin')
-				});
-			}
+			var margin = $body.data('true-modal-margin');
+
+			$body.css({
+				overflow: 'visible',
+				'margin-right': margin
+			});
+
+			this.opts.afterBodyOverflowOn(this, margin);
 		},
 		bodyOverflowOff: function() {
 			if (this.opts.statical || $body.css('overflow') == 'hidden') {
@@ -230,32 +236,36 @@
 			var oldBodyOuterWidth = $body.outerWidth();
 			$body.css({overflow: 'hidden'});
 
-			var newBodyOuterWidth = $body.outerWidth();
+			var newBodyOuterWidth = $body.outerWidth(),
+				margin = newBodyOuterWidth - oldBodyOuterWidth + parseInt(currentMargin);
 
-			$body.css('margin-right', ( newBodyOuterWidth - oldBodyOuterWidth + parseInt(currentMargin) ) + 'px');
+			$body.css('margin-right', margin + 'px');
+
+			this.opts.afterBodyOverflowOff(this, margin);
 		},
 		adjustModal: function() {
-			if (this.opts.statical) {
-				this.$overlay.add(this.$viewport).css({
-					height: $document.height(),
-					width: $document.width()
-				});
+			if (!this.opts.statical) {
+				return false;
 			}
+
+			this.$overlay.add(this.$viewport).css({
+				height: $document.height(),
+				width: $document.width()
+			});
 		},
 		adjustContainer: function() {
-			var top = this.opts.containerTop,
-				width = this.opts.width;
+			var width = this.opts.width;
+			if (this.$spacer.length) {
+				width = this.$spacer.outerWidth();
+			}
 
+			var top = this.opts.containerTop;
 			if (top == 'auto') {
 				top = Math.round(($window.height() - this.$container.outerHeight())/3);
 
 				if (top < 0) {
 					top = 10;
 				}
-			}
-
-			if (this.$spacer) {
-				width = this.$spacer.outerWidth();
 			}
 
 			this.$container.css({
@@ -272,10 +282,15 @@
 		addProfile: function(name, options) {
 			profiles[name] = options;
 		},
-		getObjByAttrId: function(attrId) {
-			return modals[attrId.replace('true-modal-', '')];
+		getModalById: function(id) {
+			return modals[(id + '').replace('true-modal-', '')];
 		},
-		getAll$modals: function(onlyActive) {
+		getModalByElem: function($el) {
+			var $modal = $el.hasClass('div.true-modal') ? $el : $el.closest('div.true-modal');
+
+			return $modal.length ? modals[ $modal.attr('id').replace('true-modal-', '') ] : null;
+		},
+		$getAllModals: function(onlyActive) {
 			return $mainContainer.find( '> div.true-modal' + (onlyActive ? ':visible' : '') );
 		},
 		$container: null

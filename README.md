@@ -26,9 +26,7 @@ Initialise the script like this:
     <script>
         $(document).ready(function() {
 			var modal = $.trueModal.go({
-				content: {
-					html: 'Hello :)'
-				},
+				content: 'Hello :)',
 				width: 200
 			});
         });
@@ -79,9 +77,7 @@ You can create profiles order to not pass options many time:
     <script>
         $(document).ready(function() {
 			$.trueModal.addProfile('loader', {
-				content: {
-					html: '<img src="loader.gif" />'
-				},
+				content: '<img src="loader.gif" />',
 				width: 50
 			});
 
@@ -90,7 +86,7 @@ You can create profiles order to not pass options many time:
 				onOverlayClick: 'hide',
 				autoShow: false,
 				beforeShow: function(modal) {
-					if ($.trueModal.getAll$modals().last().attr('id') != modal.attrId) {
+					if ($.trueModal.$getAllModals().last().attr('id') != modal.attrId) {
 						$.trueModal.$container.append( modal.$modal.detach() ); // reorder modal with loader on the front
 					}
 				}
