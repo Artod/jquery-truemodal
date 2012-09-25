@@ -1,6 +1,6 @@
 /*
-* jQuery TrueModal 21.09.2012
-* (c) 2012 Artod, http://artod.ru
+* jQuery TrueModal 25.09.2012
+* (c) 2012 http://artod.ru
 */
 
 ;(function($, window, document) {
@@ -17,10 +17,10 @@
 			return function() {
 				return id++;
 			};
-		})(),		
+		})(),
 		switchAction = function(action, obj) {
 			if ( $.isFunction(action) ) {
-				return action();			
+				return action();
 			} else if ( $.isFunction(obj[action]) ) {
 				return obj[action]();
 			}
@@ -35,7 +35,7 @@
 		'		#true-modals .true-modal{display:none; position:fixed; top:0; left:0; right:0; bottom:0;}\n' +
 		'			#true-modals .true-modal-overlay{position:absolute; top:0; left:0; background-color:#000; height:100%; width:100%; z-index:100;}\n' +
 		'			#true-modals .true-modal-viewport{position:absolute; top:0; left:0;  height:100%; width:100%; z-index:100; -webkit-overflow-scrolling: touch;}\n' +
-		'				#true-modals .true-modal-container{position:relative; background-color:transparent; margin:0px auto 20px auto;}\n' +
+		'				#true-modals .true-modal-container{position:relative; background-color:transparent; margin:0px 0px 20px 0px; left:50%; float:left;}\n' +
 		'</style>');
 
 		$.trueModal.$container = $mainContainer = $('#true-modals');
@@ -69,7 +69,6 @@
 		this.opts = $.extend({
 			content: '',
 			template: '{html}',
-			spacerSelector: '',
 			width: 0,
 			autoShow: true,
 			overlayOpacity: 0.3,
@@ -112,8 +111,6 @@
 		this.$viewport = $('div.true-modal-viewport', this.$modal);
 
 		this.$container.append( $.nano(this.opts.template, this.opts.content) );
-
-		this.$spacer = this.$container.find(this.opts.spacerSelector);
 
 		this.$overlay.css({
 			opacity: this.opts.overlayOpacity
@@ -254,11 +251,6 @@
 			});
 		},
 		adjustContainer: function() {
-			var width = this.opts.width;
-			if (this.$spacer.length) {
-				width = this.$spacer.outerWidth();
-			}
-
 			var top = this.opts.containerTop;
 			if (top == 'auto') {
 				top = Math.round(($window.height() - this.$container.outerHeight())/3);
@@ -268,8 +260,12 @@
 				}
 			}
 
+			if (this.opts.width) {
+				this.$container.width(this.opts.width);
+			}
+
 			this.$container.css({
-				width: width,
+				'margin-left': '-' + this.$container.width()/2 + 'px',
 				top: (this.opts.statical ? $window.scrollTop() : 0) + top + 'px'
 			});
 		}
