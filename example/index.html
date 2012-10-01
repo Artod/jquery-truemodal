@@ -21,10 +21,11 @@
 								longText: multiplyText('<a href="#">ShowModal</a><br />', 100),
 								button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
 							},
+							render: function(content) {
+								return $.nano( $('#template').html(), content );
+							},
 							statical: $.browser.mobile,
 							containerTop: 20,
-							width: 400,
-							template: $('#template').text(),
 							beforeRemove: function() {
 								return confirm('You sure?');
 							}

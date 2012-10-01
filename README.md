@@ -16,8 +16,7 @@ To get started, download the plugin, unzip it and copy files to your website/app
 Load files in the 'head' section of your HTML document. Make sure you also add the jQuery library.
 
     <head>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-		<script src="jquery.nano.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>		
         <script src="jquery.truemodal.js"></script>
     </head>
 
@@ -43,21 +42,17 @@ May also be passed an optional options object which will extend the default valu
 					html: 'Hello! :)',
 					button: '<input type="button" value="OK" class="true-modal-remove" /> | <input type="button" value="Cancel" class="true-modal-remove" />'
 				},
-				template: '<div style="text-align:right;"><a href="#" class="true-modal-remove">Close</a> | <a href="#" class="true-modal-hide">Hide</a></div> <div>{html}</div><div>{button}</div>',
+				render: function(content) {
+					return '<div style="text-align:right;"><a href="#" class="true-modal-remove">Close</a> | <a href="#" class="true-modal-hide">Hide</a></div> <div>' + content.html + '</div><div>' + content.button + '</div>';
+				},
 				statical: isMobileBrowser,
 				containerTop: 20,
 				overlayOpacity: 0.3,
 				width: 500,
 				onOverlayClick: 'remove',
 				onEsc: 'hide',
-				beforeShow: function(modal) {
-					alert('beforeShow');
-				},
-				afterShow: function(modal) {
-					alert('afterShow');
-				},
 				beforeRemove: function(modal) {
-					alert('beforeRemove');
+					return confirm('You sure?');
 				},
 				afterRemove: function(modal) {
 					alert('afterRemove');
@@ -67,31 +62,36 @@ May also be passed an optional options object which will extend the default valu
 				},
 				afterHide: function(modal) {
 					alert('afterHide');
+				},
+				beforeShow: function(modal) {
+					alert('beforeShow');
+				},
+				afterShow: function(modal) {
+					alert('afterShow');
 				}
 			});
         });
     </script>
 
-You can create profiles order to not pass options many time:
+You can create profiles in order to not pass options many time:
 
     <script>
         $(document).ready(function() {
 			$.trueModal.addProfile('loader', {
 				content: '<img src="loader.gif" />',
-				width: 50
+				width: 50,
+				autoShow: true
 			});
 
 			window.trueModalLoader = $.trueModal.go('loader', {
 				onEsc: 'hide',
 				onOverlayClick: 'hide',
 				autoShow: false,
-				beforeShow: function(modal) {
-					if ($.trueModal.$getAllModals().last().attr('id') != modal.attrId) {
-						$.trueModal.$container.append( modal.$modal.detach() ); // reorder modal with loader on the front
-					}
+				beforeRemove: function() {
+					return false;
 				}
 			});
-
+	
 			window.trueModalLoader.show();
         });
     </script>

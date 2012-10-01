@@ -1,6 +1,6 @@
 /*
-* jQuery TrueModal 25.09.2012
-* (c) 2012 http://artod.ru
+* jQuery TrueModal
+* 01.10.2012 (c) http://artod.ru
 */
 
 ;(function($, window, document) {
@@ -32,9 +32,9 @@
 
 		$('head').append('<style>\n' +
 		'	#true-modals {}\n' +
-		'		#true-modals .true-modal{display:none; position:fixed; top:0; left:0; right:0; bottom:0;}\n' +
-		'			#true-modals .true-modal-overlay{position:absolute; top:0; left:0; background-color:#000; height:100%; width:100%; z-index:100;}\n' +
-		'			#true-modals .true-modal-viewport{position:absolute; top:0; left:0;  height:100%; width:100%; z-index:100; -webkit-overflow-scrolling: touch;}\n' +
+		'		#true-modals .true-modal{display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:1000;}\n' +
+		'			#true-modals .true-modal-overlay{position:absolute; top:0; left:0; background-color:#000; height:100%; width:100%; z-index:1000;}\n' +
+		'			#true-modals .true-modal-viewport{position:absolute; top:0; left:0;  height:100%; width:100%; z-index:1000; -webkit-overflow-scrolling: touch;}\n' +
 		'				#true-modals .true-modal-container{position:relative; background-color:transparent; margin:0px 0px 20px 0px; left:50%; float:left;}\n' +
 		'</style>');
 
@@ -68,7 +68,6 @@
 
 		this.opts = $.extend({
 			content: '',
-			template: '{html}',
 			width: 0,
 			autoShow: true,
 			overlayOpacity: 0.3,
@@ -76,6 +75,9 @@
 			statical: false,
 			onEsc: 'remove',
 			onOverlayClick: 'remove',
+			render: function(content) {
+				return content;
+			},
 			afterBodyOverflowOn: function(modal, margin) { },
 			afterBodyOverflowOff: function(modal, margin) { },
 			beforeShow: function(modal) { },
@@ -87,10 +89,6 @@
 			beforeRemove: function(modal) { },
 			afterRemove: function(modal) { }
 		}, (profiles[profile] ? profiles[profile] : {}), options);
-
-		if (typeof this.opts.content == 'string') {
-			this.opts.content = {html: this.opts.content};
-		}
 
 		this.bodyMargin = 0;
 
@@ -110,7 +108,7 @@
 		this.$container = $('div.true-modal-container', this.$modal);
 		this.$viewport = $('div.true-modal-viewport', this.$modal);
 
-		this.$container.append( $.nano(this.opts.template, this.opts.content) );
+		this.$container.append( this.opts.render(this.opts.content) );
 
 		this.$overlay.css({
 			opacity: this.opts.overlayOpacity
@@ -286,8 +284,13 @@
 
 			return $modal.length ? modals[ $modal.attr('id').replace('true-modal-', '') ] : null;
 		},
-		$getAllModals: function(onlyActive) {
-			return $mainContainer.find( '> div.true-modal' + (onlyActive ? ':visible' : '') );
+		getAllModals: function() {
+			return modals;
+		},
+		removeAll: function() {
+			$.each(modals, function(id, modal) {
+				modal.remove();
+			});
 		},
 		$container: null
 	};
