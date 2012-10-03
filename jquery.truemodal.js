@@ -1,6 +1,6 @@
 /*
 * jQuery TrueModal
-* 01.10.2012 (c) http://artod.ru
+* 03.10.2012 (c) http://artod.ru
 */
 
 ;(function($, window, document) {
@@ -35,7 +35,7 @@
 		'		#true-modals .true-modal{display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:1000;}\n' +
 		'			#true-modals .true-modal-overlay{position:absolute; top:0; left:0; background-color:#000; height:100%; width:100%; z-index:1000;}\n' +
 		'			#true-modals .true-modal-viewport{position:absolute; top:0; left:0;  height:100%; width:100%; z-index:1000; -webkit-overflow-scrolling: touch;}\n' +
-		'				#true-modals .true-modal-container{position:relative; background-color:transparent; margin:0px 0px 20px 0px; left:50%; float:left;}\n' +
+		'				#true-modals .true-modal-container{position:relative; top:0; left:0; background-color:transparent; margin:0px 0px 20px 0px; float:left;}\n' +
 		'</style>');
 
 		$.trueModal.$container = $mainContainer = $('#true-modals');
@@ -262,8 +262,9 @@
 				this.$container.width(this.opts.width);
 			}
 
+			var margin = Math.round( ( $window.width() - this.$container.width() ) / 2 );
 			this.$container.css({
-				'margin-left': '-' + this.$container.width()/2 + 'px',
+				'margin-left': (margin < 0 ? 0 : margin) + 'px',
 				top: (this.opts.statical ? $window.scrollTop() : 0) + top + 'px'
 			});
 		}
