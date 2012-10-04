@@ -7,7 +7,7 @@ Copyright (c) 2012 Artod - gartod@gmail.com
 Demo
 ----------
 
-http://artod.ru/trueModal/demo/
+http://artod.ru/true-modal/demo/
 
 How to use
 ----------
