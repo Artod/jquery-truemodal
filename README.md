@@ -1,4 +1,4 @@
-trueModal
+jQuery TrueModal
 ========
 
 Modal popup with non scrollable background.
