@@ -1,6 +1,6 @@
 /*
 * jQuery TrueModal
-* 03.10.2012 (c) http://artod.ru
+* 09.10.2012 (c) http://artod.ru
 */
 
 ;(function($, window, document) {
@@ -251,9 +251,13 @@
 		adjustContainer: function() {
 			var top = this.opts.containerTop;
 			if (top == 'auto') {
-				top = Math.round(($window.height() - this.$container.outerHeight())/3);
-
-				if (top < 0) {
+				top = 10;
+				
+				if (!this.opts.statical) {
+					top = Math.round( ( $window.height() - this.$container.outerHeight() ) / 3 );
+				}
+				
+				if (top < 10) {
 					top = 10;
 				}
 			}
@@ -262,10 +266,12 @@
 				this.$container.width(this.opts.width);
 			}
 
-			var margin = Math.round( ( $window.width() - this.$container.width() ) / 2 );
+			var $viewport = this.opts.statical ? $document : $window,
+				margin = Math.round( ( $viewport.width() - this.$container.outerWidth() ) / 2 );
+
 			this.$container.css({
 				'margin-left': (margin < 0 ? 0 : margin) + 'px',
-				top: (this.opts.statical ? $window.scrollTop() : 0) + top + 'px'
+				top: (this.opts.statical ? $viewport.scrollTop() : 0) + parseInt(top) + 'px'
 			});
 		}
 	};
