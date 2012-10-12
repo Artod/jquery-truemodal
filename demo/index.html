@@ -14,7 +14,7 @@
 				var multiplyText = function(text, sum) {for(var out='', i=0; i < sum; i++){out += i + '. ' + text}; return out;};
 
 				$('body').prepend(multiplyText('<a href="#">ShowModal</a><br />', 200))
-					.on('click', 'a[!class]', function(e) {
+					.on('click', 'a:not([class])', function(e) {
 						var modal = $.trueModal.go({
 							content: {
 								html: 'Hello! :)',
