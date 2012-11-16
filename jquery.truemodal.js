@@ -1,6 +1,6 @@
 /*
 * jQuery TrueModal
-* 09.10.2012 (c) http://artod.ru
+* 16.11.2012 (c) http://artod.ru
 */
 
 ;(function($, window, document) {
@@ -108,6 +108,8 @@
 		this.$container = $('div.true-modal-container', this.$modal);
 		this.$viewport = $('div.true-modal-viewport', this.$modal);
 
+		this.currentScroll = null;
+
 		this.$container.append( this.opts.render(this.opts.content) );
 
 		this.$overlay.css({
@@ -211,6 +213,8 @@
 				return false;
 			}
 
+			$window.scrollTop(this.currentScroll);
+
 			var margin = $body.data('true-modal-margin');
 
 			$body.css({
@@ -224,6 +228,8 @@
 			if (this.opts.statical || $body.css('overflow') == 'hidden') {
 				return false;
 			}
+
+			this.currentScroll = $window.scrollTop();
 
 			var currentMargin = $body.css('margin-right');
 			$body.data('true-modal-margin', currentMargin);
@@ -252,11 +258,11 @@
 			var top = this.opts.containerTop;
 			if (top == 'auto') {
 				top = 10;
-				
+
 				if (!this.opts.statical) {
 					top = Math.round( ( $window.height() - this.$container.outerHeight() ) / 3 );
 				}
-				
+
 				if (top < 10) {
 					top = 10;
 				}
