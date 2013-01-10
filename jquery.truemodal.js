@@ -1,6 +1,6 @@
 /*
 * jQuery TrueModal
-* 16.11.2012 (c) http://artod.ru
+* 10.01.2013 (c) http://artod.ru
 */
 
 ;(function($, window, document) {
@@ -213,7 +213,9 @@
 				return false;
 			}
 
-			$window.scrollTop(this.currentScroll);
+			if (this.currentScroll !== null) {
+				$window.scrollTop(this.currentScroll);
+			}
 
 			var margin = $body.data('true-modal-margin');
 
