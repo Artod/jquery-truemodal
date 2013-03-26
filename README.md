@@ -2,7 +2,7 @@ jQuery TrueModal
 ========
 
 Modal popup with non scrollable background.
-Copyright (c) 2012 Artod - gartod@gmail.com
+Copyright (c) 2013 Artod - gartod@gmail.com
 
 Demo
 ----------
@@ -16,7 +16,7 @@ To get started, download the plugin, unzip it and copy files to your website/app
 Load files in the 'head' section of your HTML document. Make sure you also add the jQuery library.
 
     <head>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>		
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>		
         <script src="jquery.truemodal.js"></script>
     </head>
 
