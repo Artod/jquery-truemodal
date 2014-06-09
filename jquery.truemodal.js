@@ -1,6 +1,6 @@
 /*
 * jQuery TrueModal
-* 10.01.2013 (c) http://artod.ru
+* 09.06.2014 (c) http://artod.ru
 */
 
 ;(function($, window, document) {
@@ -8,6 +8,7 @@
 
 	var $window = $(window),
 		$body,
+		$html,
 		$mainContainer,
 		$document = $(document),
 		profiles = {},
@@ -28,6 +29,7 @@
 
 	$(function() {
 		$body = $('body');
+		$html = $('html');
 		$body.append('<div id="true-modals"></div>');
 
 		$('head').append('<style>\n' +
@@ -75,7 +77,7 @@
 			statical: false,
 			onEsc: 'remove',
 			onOverlayClick: 'remove',
-			render: function(content) {
+			render: function(content, modal) {
 				return content;
 			},
 			afterBodyOverflowOn: function(modal, margin) { },
@@ -107,10 +109,10 @@
 		this.$overlay = $('div.true-modal-overlay', this.$modal);
 		this.$container = $('div.true-modal-container', this.$modal);
 		this.$viewport = $('div.true-modal-viewport', this.$modal);
+		
+		this.currentScroll = null; // for setting scroll because in some browsers there are auto scroll if set empty hash and in IE trables
 
-		this.currentScroll = null;
-
-		this.$container.append( this.opts.render(this.opts.content) );
+		this.$container.append( this.opts.render(this.opts.content, this) );
 
 		this.$overlay.css({
 			opacity: this.opts.overlayOpacity
@@ -212,14 +214,14 @@
 			if (this.opts.statical || $mainContainer.find('> div.true-modal:visible').length) {
 				return false;
 			}
-
+			
 			if (this.currentScroll !== null) {
-				$window.scrollTop(this.currentScroll);
+				$window.scrollTop(this.currentScroll);		
 			}
 
-			var margin = $body.data('true-modal-margin');
+			var margin = $html.data('true-modal-margin');
 
-			$body.css({
+			$html.css({
 				overflow: 'visible',
 				'margin-right': margin
 			});
@@ -227,22 +229,22 @@
 			this.opts.afterBodyOverflowOn(this, margin);
 		},
 		bodyOverflowOff: function() {
-			if (this.opts.statical || $body.css('overflow') == 'hidden') {
+			if (this.opts.statical || $html.css('overflow') === 'hidden') {
 				return false;
-			}
+			}			
 
 			this.currentScroll = $window.scrollTop();
 
-			var currentMargin = $body.css('margin-right');
-			$body.data('true-modal-margin', currentMargin);
+			var currentMargin = $html.css('margin-right');
+			$html.data('true-modal-margin', currentMargin);
 
-			var oldBodyOuterWidth = $body.outerWidth();
-			$body.css({overflow: 'hidden'});
+			var oldBodyOuterWidth = $html.outerWidth();
+			$html.css({overflow: 'hidden'});
 
-			var newBodyOuterWidth = $body.outerWidth(),
+			var newBodyOuterWidth = $html.outerWidth(),
 				margin = newBodyOuterWidth - oldBodyOuterWidth + parseInt(currentMargin);
 
-			$body.css('margin-right', margin + 'px');
+			$html.css('margin-right', margin + 'px');
 
 			this.opts.afterBodyOverflowOff(this, margin);
 		},
@@ -258,13 +260,13 @@
 		},
 		adjustContainer: function() {
 			var top = this.opts.containerTop;
-			if (top == 'auto') {
+			if (top === 'auto') {
 				top = 10;
-
+				
 				if (!this.opts.statical) {
 					top = Math.round( ( $window.height() - this.$container.outerHeight() ) / 3 );
 				}
-
+				
 				if (top < 10) {
 					top = 10;
 				}
@@ -275,7 +277,7 @@
 			}
 
 			var $viewport = this.opts.statical ? $document : $window,
-				margin = Math.round( ( $viewport.width() - this.$container.outerWidth() ) / 2 );
+				margin = Math.round( ( $viewport.width() - this.$container.outerWidth(true) ) / 2 );
 
 			this.$container.css({
 				'margin-left': (margin < 0 ? 0 : margin) + 'px',
