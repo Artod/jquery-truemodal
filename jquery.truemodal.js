@@ -277,7 +277,7 @@
 			}
 
 			var $viewport = this.opts.statical ? $document : $window,
-				margin = Math.round( ( $viewport.width() - this.$container.outerWidth(true) ) / 2 );
+				margin = Math.round( ( $viewport.width() - this.$container.outerWidth() ) / 2 );
 
 			this.$container.css({
 				'margin-left': (margin < 0 ? 0 : margin) + 'px',
