@@ -213,11 +213,7 @@
 		bodyOverflowOn: function() {
 			if (this.opts.statical || $mainContainer.find('> div.true-modal:visible').length) {
 				return false;
-			}
-			
-			if (this.currentScroll !== null) {
-				$window.scrollTop(this.currentScroll);		
-			}
+			}			
 
 			var margin = $html.data('true-modal-margin');
 
@@ -226,6 +222,10 @@
 				'margin-right': margin
 			});
 
+			if (this.currentScroll !== null) {
+				$window.scrollTop(this.currentScroll);		
+			}
+			
 			this.opts.afterBodyOverflowOn(this, margin);
 		},
 		bodyOverflowOff: function() {
